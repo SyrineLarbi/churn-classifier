@@ -1,0 +1,7 @@
+[theme]
+base               = "dark"
+primaryColor       = "#d6399f"   # magenta
+backgroundColor    = "#222222"
+secondaryBackgroundColor = "#1e1e1e"
+textColor          = "#ffffff"
+font               = "sans serif"
