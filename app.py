@@ -133,18 +133,16 @@ explainer = shap.TreeExplainer(clf)
 sv = explainer(row_t)
 sv.feature_names = list(feature_names)
 
-# Render the waterfall to a PNG ourselves. st.pyplot() defaults to saving with
-# bbox_inches='tight', and SHAP waterfalls place artists that blow the "tight"
-# bounding box past matplotlib's 2^16-pixel limit — a ValueError on Streamlit
-# Cloud. Saving with the default bbox (plus a wide left margin so the long
-# feature labels aren't clipped) avoids that entirely.
+# Render the waterfall to a PNG ourselves and show it via st.image. With the
+# correct (non-degenerate) explainer above, bbox_inches='tight' now fits every
+# element — long left labels and the full x-axis — without clipping.
 plt.close('all')
 shap.plots.waterfall(sv[0], max_display=10, show=False)
 fig = plt.gcf()
-fig.set_size_inches(12, 5.5)
-fig.subplots_adjust(left=0.42, right=0.98, top=0.90, bottom=0.12)
+fig.set_size_inches(10, 5)
 buf = io.BytesIO()
-fig.savefig(buf, format='png', dpi=150, facecolor=fig.get_facecolor())
+fig.savefig(buf, format='png', dpi=150, bbox_inches='tight',
+            facecolor=fig.get_facecolor())
 plt.close('all')
 st.image(buf.getvalue(), use_container_width=True)
 
