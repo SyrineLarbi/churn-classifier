@@ -126,20 +126,25 @@ clf = pipe.named_steps['clf']
 row_t = pre.transform(row)
 feature_names = pre.get_feature_names_out()
 
-explainer = shap.Explainer(clf, row_t, feature_names=feature_names)
+# TreeExplainer uses the tree structure and needs no background dataset, so
+# it gives a correct single-row explanation. (shap.Explainer(clf, row_t) would
+# use the one row as its own background and collapse every contribution to ~0.)
+explainer = shap.TreeExplainer(clf)
 sv = explainer(row_t)
+sv.feature_names = list(feature_names)
 
-# Render the waterfall to a PNG ourselves. st.pyplot() defaults to saving
-# with bbox_inches='tight', and SHAP waterfalls place artists that blow the
-# "tight" bounding box past matplotlib's 2^16-pixel limit — a ValueError on
-# Streamlit Cloud. Saving with the default bbox and showing via st.image
-# avoids that entirely.
+# Render the waterfall to a PNG ourselves. st.pyplot() defaults to saving with
+# bbox_inches='tight', and SHAP waterfalls place artists that blow the "tight"
+# bounding box past matplotlib's 2^16-pixel limit — a ValueError on Streamlit
+# Cloud. Saving with the default bbox (plus a wide left margin so the long
+# feature labels aren't clipped) avoids that entirely.
 plt.close('all')
 shap.plots.waterfall(sv[0], max_display=10, show=False)
 fig = plt.gcf()
-fig.set_size_inches(9, 5)
+fig.set_size_inches(12, 5.5)
+fig.subplots_adjust(left=0.42, right=0.98, top=0.90, bottom=0.12)
 buf = io.BytesIO()
-fig.savefig(buf, format='png', dpi=130, facecolor=fig.get_facecolor())
+fig.savefig(buf, format='png', dpi=150, facecolor=fig.get_facecolor())
 plt.close('all')
 st.image(buf.getvalue(), use_container_width=True)
 
