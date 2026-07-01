@@ -4,7 +4,7 @@ Predicts customer churn from a public Telco dataset. End-to-end: preprocessing p
 
 ## Quick links
 
-- 🚀 **[Live demo (Streamlit)](https://syrine-churn.streamlit.app](https://churn-classifier-nk8qxgpsbeh8akhk3luqwu.streamlit.app/))** — drag sliders, see predictions update.
+- 🚀 **[Live demo (Streamlit)](https://syrine-churn.streamlit.app](https://churn-classifier-nk8qxgpsbeh8akhk3luqwu.streamlit.app/)](https://churn-classifier-nk8qxgpsbeh8akhk3luqwu.streamlit.app/))** — drag sliders, see predictions update.
 - 📋 **[Model card](MODEL_CARD.md)** — what / why / caveats.
 - 🧪 **[Training script](src/train.py)** — runs in ~3 seconds on a laptop.
 
