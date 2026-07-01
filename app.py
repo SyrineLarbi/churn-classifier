@@ -6,6 +6,7 @@ Deploy: Streamlit Community Cloud (Step 8)
 """
 from __future__ import annotations
 
+import io
 from pathlib import Path
 
 import joblib
@@ -128,9 +129,19 @@ feature_names = pre.get_feature_names_out()
 explainer = shap.Explainer(clf, row_t, feature_names=feature_names)
 sv = explainer(row_t)
 
-fig, _ = plt.subplots()
+# Render the waterfall to a PNG ourselves. st.pyplot() defaults to saving
+# with bbox_inches='tight', and SHAP waterfalls place artists that blow the
+# "tight" bounding box past matplotlib's 2^16-pixel limit — a ValueError on
+# Streamlit Cloud. Saving with the default bbox and showing via st.image
+# avoids that entirely.
+plt.close('all')
 shap.plots.waterfall(sv[0], max_display=10, show=False)
-st.pyplot(fig, clear_figure=True)
+fig = plt.gcf()
+fig.set_size_inches(9, 5)
+buf = io.BytesIO()
+fig.savefig(buf, format='png', dpi=130, facecolor=fig.get_facecolor())
+plt.close('all')
+st.image(buf.getvalue(), use_container_width=True)
 
 st.caption(
     'Each bar shows how a feature pushed this prediction higher (red, toward '
